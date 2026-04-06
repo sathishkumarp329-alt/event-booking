@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}Login — EventBook{% endblock %}
+{% block content %}
+
+<div style="min-height:80vh;display:flex;align-items:center;justify-content:center;">
+
+  <!-- Circuit SVG decorations -->
+  <svg style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <line x1="0" y1="200" x2="300" y2="200" stroke="#00c8ff" stroke-width="1" opacity="0.3"/>
+    <line x1="300" y1="200" x2="300" y2="120" stroke="#00c8ff" stroke-width="1" opacity="0.3"/>
+    <circle cx="300" cy="200" r="4" fill="#00c8ff" opacity="0.5"/>
+    <circle cx="300" cy="120" r="3" fill="#00c8ff" opacity="0.3"/>
+    <line x1="1200" y1="200" x2="900" y2="200" stroke="#00c8ff" stroke-width="1" opacity="0.3"/>
+    <line x1="900" y1="200" x2="900" y2="120" stroke="#00c8ff" stroke-width="1" opacity="0.3"/>
+    <circle cx="900" cy="200" r="4" fill="#00c8ff" opacity="0.5"/>
+    <line x1="0" y1="600" x2="280" y2="600" stroke="#00c8ff" stroke-width="1" opacity="0.2"/>
+    <circle cx="280" cy="600" r="4" fill="#00c8ff" opacity="0.4"/>
+    <line x1="1200" y1="600" x2="920" y2="600" stroke="#00c8ff" stroke-width="1" opacity="0.2"/>
+    <circle cx="920" cy="600" r="4" fill="#00c8ff" opacity="0.4"/>
+    <rect x="80" y="160" width="40" height="24" fill="none" stroke="#00c8ff" stroke-width="0.7" opacity="0.2"/>
+    <rect x="1080" y="160" width="40" height="24" fill="none" stroke="#00c8ff" stroke-width="0.7" opacity="0.2"/>
+  </svg>
+
+  <div style="position:relative;z-index:1;width:100%;max-width:400px;padding:0 16px;">
+    <!-- Corner brackets -->
+    <div class="corner-tl pulse"></div>
+    <div class="corner-tr pulse"></div>
+    <div class="corner-bl pulse"></div>
+    <div class="corner-br pulse"></div>
+
+    <div class="cyber-card" style="padding:40px 36px 36px;">
+      <div class="scan-line"></div>
+
+      <!-- Header -->
+      <div style="text-align:center;margin-bottom:32px;">
+        <div style="width:54px;height:54px;margin:0 auto 16px;border:1.5px solid #00c8ff;border-radius:4px;display:flex;align-items:center;justify-content:center;">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="1.5">
+            <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
+        <h1 class="flicker" style="font-family:'Orbitron',monospace;font-size:20px;font-weight:700;color:#00e5ff;letter-spacing:6px;text-shadow:0 0 20px rgba(0,229,255,0.7);">LOGIN</h1>
+        <p style="font-size:11px;letter-spacing:3px;color:rgba(0,200,255,0.4);margin-top:6px;">SECURE ACCESS PORTAL</p>
+      </div>
+
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="flash-{{ category }}">▸ {{ message | upper }}</div>
+        {% endfor %}
+      {% endwith %}
+
+      <form method="POST" action="/login">
+        <!-- Email -->
+        <div style="margin-bottom:20px;">
+          <label style="display:block;font-size:11px;letter-spacing:2px;color:rgba(0,200,255,0.6);margin-bottom:8px;">USER IDENTIFIER</label>
+          <div style="position:relative;">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00a0cc" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            </span>
+            <input type="email" name="email" required class="cyber-input" placeholder="user@domain.com">
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div style="margin-bottom:20px;">
+          <label style="display:block;font-size:11px;letter-spacing:2px;color:rgba(0,200,255,0.6);margin-bottom:8px;">ACCESS CODE</label>
+          <div style="position:relative;">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00a0cc" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+            </span>
+            <input type="password" name="password" required class="cyber-input" placeholder="••••••••••••">
+          </div>
+        </div>
+
+        <!-- Remember + Forgot -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:1px;color:rgba(0,180,220,0.7);cursor:pointer;">
+            <input type="checkbox" name="remember" style="accent-color:#00c8ff;width:13px;height:13px;">
+            KEEP SESSION
+          </label>
+          <a href="#" style="font-size:11px;letter-spacing:1px;color:rgba(0,180,220,0.5);text-decoration:none;">FORGOT CODE?</a>
+        </div>
+
+        <button type="submit" class="cyber-btn" style="width:100%;padding:14px;">AUTHENTICATE</button>
+      </form>
+
+      <div style="display:flex;align-items:center;gap:12px;margin:20px 0;">
+        <div style="flex:1;height:1px;background:rgba(0,150,200,0.2);"></div>
+        <span style="font-size:10px;letter-spacing:2px;color:rgba(0,150,200,0.4);">OR</span>
+        <div style="flex:1;height:1px;background:rgba(0,150,200,0.2);"></div>
+      </div>
+
+      <div style="text-align:center;font-size:11px;letter-spacing:1px;color:rgba(0,150,200,0.5);">
+        NEW USER? <a href="/register" style="color:#00a8d4;text-decoration:none;">INITIALIZE ACCOUNT</a>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-top:24px;padding-top:16px;border-top:1px solid rgba(0,150,200,0.15);">
+        <div style="width:6px;height:6px;border-radius:50%;background:#00ff88;box-shadow:0 0 8px #00ff88;"></div>
+        <span style="font-size:10px;letter-spacing:2px;color:rgba(0,180,150,0.6);">SYSTEM ONLINE · ENCRYPTED</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Register — EventBook{% endblock %}
+{% block content %}
+
+<div style="min-height:80vh;display:flex;align-items:center;justify-content:center;">
+
+  <svg style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <line x1="0" y1="250" x2="260" y2="250" stroke="#00c8ff" stroke-width="1" opacity="0.25"/>
+    <line x1="260" y1="250" x2="260" y2="150" stroke="#00c8ff" stroke-width="1" opacity="0.25"/>
+    <circle cx="260" cy="250" r="4" fill="#00c8ff" opacity="0.4"/>
+    <line x1="1200" y1="250" x2="940" y2="250" stroke="#00c8ff" stroke-width="1" opacity="0.25"/>
+    <line x1="940" y1="250" x2="940" y2="150" stroke="#00c8ff" stroke-width="1" opacity="0.25"/>
+    <circle cx="940" cy="250" r="4" fill="#00c8ff" opacity="0.4"/>
+    <line x1="0" y1="650" x2="200" y2="650" stroke="#00c8ff" stroke-width="1" opacity="0.15"/>
+    <line x1="1200" y1="650" x2="1000" y2="650" stroke="#00c8ff" stroke-width="1" opacity="0.15"/>
+  </svg>
+
+  <div style="position:relative;z-index:1;width:100%;max-width:420px;padding:0 16px;">
+    <div class="corner-tl pulse"></div>
+    <div class="corner-tr pulse"></div>
+    <div class="corner-bl pulse"></div>
+    <div class="corner-br pulse"></div>
+
+    <div class="cyber-card" style="padding:40px 36px 36px;">
+      <div class="scan-line"></div>
+
+      <!-- Header -->
+      <div style="text-align:center;margin-bottom:30px;">
+        <div style="width:54px;height:54px;margin:0 auto 16px;border:1.5px solid #00c8ff;border-radius:4px;display:flex;align-items:center;justify-content:center;">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="1.5">
+            <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
+          </svg>
+        </div>
+        <h1 class="flicker" style="font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:#00e5ff;letter-spacing:4px;text-shadow:0 0 20px rgba(0,229,255,0.7);">REGISTER</h1>
+        <p style="font-size:11px;letter-spacing:3px;color:rgba(0,200,255,0.4);margin-top:6px;">INITIALIZE NEW ACCOUNT</p>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="flash-{{ category }}">▸ {{ message | upper }}</div>
+        {% endfor %}
+      {% endwith %}
+
+      <form method="POST" action="/register">
+        <!-- Name -->
+        <div style="margin-bottom:18px;">
+          <label style="display:block;font-size:11px;letter-spacing:2px;color:rgba(0,200,255,0.6);margin-bottom:8px;">FULL NAME</label>
+          <div style="position:relative;">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00a0cc" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            </span>
+            <input type="text" name="name" required class="cyber-input" placeholder="Enter your name">
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div style="margin-bottom:18px;">
+          <label style="display:block;font-size:11px;letter-spacing:2px;color:rgba(0,200,255,0.6);margin-bottom:8px;">EMAIL ADDRESS</label>
+          <div style="position:relative;">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00a0cc" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+            </span>
+            <input type="email" name="email" required class="cyber-input" placeholder="user@domain.com">
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div style="margin-bottom:18px;">
+          <label style="display:block;font-size:11px;letter-spacing:2px;color:rgba(0,200,255,0.6);margin-bottom:8px;">ACCESS CODE</label>
+          <div style="position:relative;">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00a0cc" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+            </span>
+            <input type="password" name="password" required class="cyber-input" placeholder="Min. 8 characters">
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div style="margin-bottom:24px;">
+          <label style="display:block;font-size:11px;letter-spacing:2px;color:rgba(0,200,255,0.6);margin-bottom:8px;">CONFIRM ACCESS CODE</label>
+          <div style="position:relative;">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00a0cc" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+            </span>
+            <input type="password" name="confirm_password" required class="cyber-input" placeholder="Re-enter password">
+          </div>
+        </div>
+
+        <button type="submit" class="cyber-btn" style="width:100%;padding:14px;">INITIALIZE ACCOUNT</button>
+      </form>
+
+      <div style="display:flex;align-items:center;gap:12px;margin:20px 0;">
+        <div style="flex:1;height:1px;background:rgba(0,150,200,0.2);"></div>
+        <span style="font-size:10px;letter-spacing:2px;color:rgba(0,150,200,0.4);">OR</span>
+        <div style="flex:1;height:1px;background:rgba(0,150,200,0.2);"></div>
+      </div>
+
+      <div style="text-align:center;font-size:11px;letter-spacing:1px;color:rgba(0,150,200,0.5);">
+        EXISTING USER? <a href="/login" style="color:#00a8d4;text-decoration:none;">ACCESS PORTAL</a>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid rgba(0,150,200,0.15);">
+        <div style="width:6px;height:6px;border-radius:50%;background:#00ff88;box-shadow:0 0 8px #00ff88;"></div>
+        <span style="font-size:10px;letter-spacing:2px;color:rgba(0,180,150,0.6);">256-BIT ENCRYPTED · SECURE</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

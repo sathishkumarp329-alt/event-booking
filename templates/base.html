@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}EventBook{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Share Tech Mono', monospace;
+      background: #020d1a;
+      color: #a0d8ef;
+      min-height: 100vh;
+    }
+    .cyber-bg {
+      background: #020d1a;
+      min-height: 100vh;
+      position: relative;
+    }
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .content-wrap { position: relative; z-index: 1; }
+
+    /* Navbar */
+    .cyber-nav {
+      background: rgba(2, 15, 30, 0.95);
+      border-bottom: 1px solid rgba(0, 200, 255, 0.2);
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      font-family: 'Orbitron', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: #00e5ff;
+      text-decoration: none;
+      letter-spacing: 3px;
+      text-shadow: 0 0 15px rgba(0,229,255,0.6);
+    }
+    .nav-brand span { color: rgba(0,200,255,0.5); font-size: 12px; margin-left: 4px; }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-link {
+      color: rgba(0,200,255,0.6);
+      text-decoration: none;
+      font-size: 11px;
+      letter-spacing: 2px;
+      padding: 6px 14px;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+    .nav-link:hover {
+      color: #00e5ff;
+      border-color: rgba(0,200,255,0.3);
+      background: rgba(0,100,180,0.15);
+    }
+    .nav-link.active {
+      color: #00e5ff;
+      border-color: rgba(0,200,255,0.5);
+      background: rgba(0,80,150,0.2);
+      text-shadow: 0 0 8px rgba(0,229,255,0.5);
+    }
+    .nav-user {
+      display: flex; align-items: center; gap: 10px;
+      padding: 4px 12px;
+      border: 1px solid rgba(0,200,255,0.2);
+      border-radius: 2px;
+      font-size: 11px;
+      color: rgba(0,200,255,0.7);
+      letter-spacing: 1px;
+    }
+    .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: #00ff88; box-shadow: 0 0 6px #00ff88; }
+
+    /* Flash messages */
+    .flash-success {
+      background: rgba(0,50,20,0.8);
+      border: 1px solid rgba(0,200,100,0.4);
+      color: #00ff88;
+      padding: 10px 16px;
+      border-radius: 3px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .flash-danger {
+      background: rgba(50,0,0,0.8);
+      border: 1px solid rgba(255,50,50,0.4);
+      color: #ff6b6b;
+      padding: 10px 16px;
+      border-radius: 3px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .flash-info {
+      background: rgba(0,30,60,0.8);
+      border: 1px solid rgba(0,200,255,0.3);
+      color: #00e5ff;
+      padding: 10px 16px;
+      border-radius: 3px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    /* Cyber input */
+    .cyber-input {
+      width: 100%;
+      background: rgba(0,30,60,0.8);
+      border: 1px solid rgba(0,150,200,0.4);
+      border-radius: 3px;
+      padding: 11px 14px 11px 38px;
+      color: #00e5ff;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      letter-spacing: 1px;
+    }
+    .cyber-input::placeholder { color: rgba(0,150,200,0.35); }
+    .cyber-input:focus {
+      border-color: rgba(0,229,255,0.8);
+      box-shadow: 0 0 12px rgba(0,229,255,0.15);
+    }
+
+    /* Cyber button */
+    .cyber-btn {
+      background: linear-gradient(135deg, rgba(0,100,180,0.5), rgba(0,50,120,0.8));
+      border: 1px solid rgba(0,200,255,0.6);
+      border-radius: 3px;
+      color: #00e5ff;
+      font-family: 'Orbitron', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all .2s;
+      text-shadow: 0 0 10px rgba(0,229,255,0.8);
+      text-decoration: none;
+      display: inline-block;
+    }
+    .cyber-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg,transparent,rgba(0,229,255,0.15),transparent);
+      transition: left .4s;
+    }
+    .cyber-btn:hover::before { left: 100%; }
+    .cyber-btn:hover {
+      border-color: #00e5ff;
+      box-shadow: 0 0 20px rgba(0,200,255,0.25);
+    }
+
+    /* Card */
+    .cyber-card {
+      background: rgba(2,20,40,0.92);
+      border: 1px solid rgba(0,200,255,0.25);
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cyber-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.6), transparent);
+    }
+
+    /* Corner brackets */
+    .corner-tl { position: absolute; top: -2px; left: -2px; width: 16px; height: 16px; border-top: 2px solid #00e5ff; border-left: 2px solid #00e5ff; }
+    .corner-tr { position: absolute; top: -2px; right: -2px; width: 16px; height: 16px; border-top: 2px solid #00e5ff; border-right: 2px solid #00e5ff; }
+    .corner-bl { position: absolute; bottom: -2px; left: -2px; width: 16px; height: 16px; border-bottom: 2px solid #00e5ff; border-left: 2px solid #00e5ff; }
+    .corner-br { position: absolute; bottom: -2px; right: -2px; width: 16px; height: 16px; border-bottom: 2px solid #00e5ff; border-right: 2px solid #00e5ff; }
+
+    @keyframes scan { 0% { top: -3px; } 100% { top: 100%; } }
+    @keyframes flicker { 0%,100%{opacity:1}92%{opacity:1}93%{opacity:.6}94%{opacity:1}97%{opacity:.8}98%{opacity:1} }
+    @keyframes pulse-border { 0%,100%{opacity:.5} 50%{opacity:1} }
+    .scan-line {
+      position: absolute; left: 0; right: 0; height: 2px; pointer-events: none;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.5), transparent);
+      animation: scan 4s linear infinite;
+    }
+    .flicker { animation: flicker 6s infinite; }
+    .pulse { animation: pulse-border 2s ease-in-out infinite; }
+
+    /* Page section label */
+    .section-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: rgba(0,200,255,0.5);
+      margin-bottom: 6px;
+    }
+    .section-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      color: #00e5ff;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(0,229,255,0.4);
+    }
+    .divider-line {
+      height: 1px;
+      background: linear-gradient(90deg, rgba(0,200,255,0.4), transparent);
+      margin: 8px 0 24px;
+    }
+  </style>
+</head>
+<body class="cyber-bg">
+  <div class="grid-overlay"></div>
+
+  <!-- Navbar -->
+  <nav class="cyber-nav content-wrap">
+    <a href="/" class="nav-brand">EVENT<span>BOOK</span></a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">HOME</a>
+      {% if session.user_id %}
+        <a href="/my-tickets" class="nav-link">MY TICKETS</a>
+        <div class="nav-user">
+          <div class="nav-dot"></div>
+          {{ session.user_name | upper }}
+        </div>
+        <a href="/logout" class="nav-link">LOGOUT</a>
+      {% else %}
+        <a href="/login" class="nav-link">LOGIN</a>
+        <a href="/register" class="nav-link active">REGISTER</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <main class="content-wrap" style="max-width:1200px;margin:0 auto;padding:32px 24px;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash-{{ category }}">
+          ▸ {{ message | upper }}
+        </div>
+      {% endfor %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="content-wrap" style="border-top:1px solid rgba(0,200,255,0.1);padding:16px 24px;margin-top:40px;display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-size:11px;color:rgba(0,150,200,0.4);letter-spacing:2px;">EVENTBOOK SYSTEM v1.0</span>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:6px;height:6px;border-radius:50%;background:#00ff88;box-shadow:0 0 6px #00ff88;"></div>
+      <span style="font-size:11px;color:rgba(0,180,150,0.5);letter-spacing:2px;">ALL SYSTEMS ONLINE</span>
+    </div>
+  </footer>
+</body>
+</html>

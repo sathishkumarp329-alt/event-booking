@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% block title %}Upcoming Events — EventBook{% endblock %}
+{% block content %}
+
+<style>
+  .event-card {
+    background: rgba(2,20,40,0.85);
+    border: 1px solid rgba(0,150,200,0.25);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    transition: border-color .3s, transform .2s;
+  }
+  .event-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0,200,255,0.5), transparent);
+  }
+  .event-card:hover {
+    border-color: rgba(0,200,255,0.5);
+    transform: translateY(-2px);
+  }
+  .event-card:hover .card-glow {
+    opacity: 1;
+  }
+  .card-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at top, rgba(0,100,200,0.08), transparent 70%);
+    opacity: 0;
+    transition: opacity .3s;
+    pointer-events: none;
+  }
+  .event-header {
+    background: rgba(0,40,80,0.6);
+    border-bottom: 1px solid rgba(0,150,200,0.2);
+    padding: 16px 20px;
+  }
+  .event-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: #00e5ff;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .event-date {
+    font-size: 11px;
+    color: rgba(0,200,255,0.5);
+    letter-spacing: 1px;
+  }
+  .event-body { padding: 16px 20px; }
+  .event-meta {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: rgba(0,180,220,0.6);
+    margin-bottom: 8px; letter-spacing: 1px;
+  }
+  .ticket-bar-wrap {
+    margin: 14px 0;
+    background: rgba(0,20,50,0.8);
+    border: 1px solid rgba(0,100,150,0.3);
+    border-radius: 2px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .ticket-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #0070b8, #00e5ff);
+    border-radius: 2px;
+    transition: width .5s ease;
+  }
+  .price-tag {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: #00e5ff;
+    text-shadow: 0 0 12px rgba(0,229,255,0.5);
+  }
+  .tag {
+    display: inline-block;
+    background: rgba(0,50,100,0.6);
+    border: 1px solid rgba(0,150,200,0.3);
+    border-radius: 2px;
+    padding: 3px 10px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(0,200,255,0.6);
+  }
+  .tag.sold-out {
+    border-color: rgba(255,80,80,0.4);
+    color: rgba(255,100,100,0.7);
+    background: rgba(60,0,0,0.4);
+  }
+  .no-events {
+    text-align: center;
+    padding: 80px 20px;
+    color: rgba(0,150,200,0.4);
+  }
+</style>
+
+<!-- Page header -->
+<div style="margin-bottom:32px;">
+  <div class="section-label">// LIVE FEED</div>
+  <h1 class="section-title">UPCOMING EVENTS</h1>
+  <div class="divider-line"></div>
+  <p style="font-size:12px;color:rgba(0,180,220,0.5);letter-spacing:2px;">
+    {{ events|length }} EVENT{% if events|length != 1 %}S{% endif %} AVAILABLE
+  </p>
+</div>
+
+<!-- Events grid -->
+{% if events %}
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;">
+  {% for event in events %}
+  <div class="event-card">
+    <div class="card-glow"></div>
+
+    <div class="event-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+        <div class="event-title">{{ event.title | upper }}</div>
+        {% if event.available_tickets == 0 %}
+          <span class="tag sold-out">SOLD OUT</span>
+        {% elif event.available_tickets <= 10 %}
+          <span class="tag" style="border-color:rgba(255,150,0,0.4);color:rgba(255,180,0,0.7);background:rgba(60,30,0,0.4);">FEW LEFT</span>
+        {% else %}
+          <span class="tag">AVAILABLE</span>
+        {% endif %}
+      </div>
+      <div class="event-date">
+        ◈ {{ event.event_date.strftime('%d %b %Y  ·  %I:%M %p') }}
+      </div>
+    </div>
+
+    <div class="event-body">
+      <div class="event-meta">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00a0cc" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        {{ event.venue }}
+      </div>
+
+      <div class="event-meta">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00a0cc" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+        {{ event.available_tickets }} / {{ event.total_tickets }} TICKETS REMAINING
+      </div>
+
+      <!-- Availability bar -->
+      {% set pct = (event.available_tickets / event.total_tickets * 100) | int if event.total_tickets > 0 else 0 %}
+      <div class="ticket-bar-wrap">
+        <div class="ticket-bar" style="width:{{ pct }}%;"></div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
+        <div>
+          <div style="font-size:10px;letter-spacing:2px;color:rgba(0,150,200,0.5);margin-bottom:2px;">PRICE / TICKET</div>
+          <div class="price-tag">₹{{ "%.2f" | format(event.price) }}</div>
+        </div>
+        <a href="/event/{{ event.id }}" class="cyber-btn" style="padding:10px 20px;font-size:11px;">
+          VIEW ▸
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% else %}
+<div class="no-events cyber-card" style="padding:60px 20px;">
+  <div class="scan-line"></div>
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(0,150,200,0.3)" stroke-width="1" style="margin:0 auto 16px;display:block;">
+    <rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/>
+  </svg>
+  <p style="font-family:'Orbitron',monospace;font-size:13px;letter-spacing:3px;color:rgba(0,150,200,0.4);">NO EVENTS SCHEDULED</p>
+  <p style="font-size:11px;letter-spacing:2px;color:rgba(0,100,150,0.4);margin-top:8px;">CHECK BACK SOON</p>
+</div>
+{% endif %}
+
+{% endblock %}
